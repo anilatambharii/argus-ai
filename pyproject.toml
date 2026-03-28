@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "argus-ai"
+name = "argus-llm"
 version = "0.1.0"
 description = "Production-grade LLM observability. G-ARVIS scoring for Groundedness, Accuracy, Reliability, Variance, Inference Cost, and Safety."
 readme = "README.md"
@@ -62,7 +62,7 @@ openai = [
     "openai>=1.0",
 ]
 all = [
-    "argus-ai[opentelemetry,prometheus,anthropic,openai]",
+    "argus-llm[opentelemetry,prometheus,anthropic,openai]",
 ]
 dev = [
     "pytest>=7.0",

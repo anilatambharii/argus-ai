@@ -20,6 +20,7 @@ Author: Anil Prasad | Ambharii Labs
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Callable
 
 import structlog
@@ -37,6 +38,27 @@ if TYPE_CHECKING:
     from argus_ai.monitoring.alerts import AlertRule
 
 logger = structlog.get_logger(__name__)
+
+
+@dataclass
+class ArgusConfig:
+    """Configuration for ArgusEvaluator/ArgusClient initialization.
+    
+    Attributes:
+        profile: Weight profile name (enterprise, healthcare, finance, consumer, agentic).
+        weights: Custom GarvisWeights (overrides profile).
+        thresholds: Custom threshold configuration.
+        alert_rules: List of alert rules for monitoring.
+        exporters: List of exporter names (console, prometheus, otel).
+        on_alert: Callback function for alert handling.
+    """
+
+    profile: str = "enterprise"
+    weights: GarvisWeights | None = None
+    thresholds: ThresholdConfig | None = None
+    alert_rules: list[AlertRule] | None = field(default_factory=list)
+    exporters: list[str] | None = field(default_factory=lambda: ["console"])
+    on_alert: Callable[[str, EvalResult], None] | None = None
 
 
 class ArgusClient:
@@ -272,3 +294,7 @@ def init(
         exporters=exporters,
         on_alert=on_alert,
     )
+
+
+# Alias for convenience - ArgusEvaluator is equivalent to ArgusClient
+ArgusEvaluator = ArgusClient

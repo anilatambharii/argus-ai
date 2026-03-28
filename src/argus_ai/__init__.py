@@ -35,13 +35,15 @@ from argus_ai.scoring.metrics import (
     SafetyScorer,
     VarianceScorer,
 )
-from argus_ai.sdk.client import ArgusClient, init
+from argus_ai.sdk.client import ArgusClient, ArgusConfig, ArgusEvaluator, init
 from argus_ai.types import EvalRequest, EvalResult
 
 __all__ = [
     # SDK entry points
     "init",
     "ArgusClient",
+    "ArgusEvaluator",
+    "ArgusConfig",
     # G-ARVIS scoring
     "GarvisScorer",
     "GarvisScore",
