@@ -20,7 +20,6 @@ import structlog
 
 if TYPE_CHECKING:
     from argus_ai.sdk.client import ArgusClient
-    from argus_ai.types import EvalResult
 
 logger = structlog.get_logger(__name__)
 
@@ -86,7 +85,7 @@ def argus_evaluate(
             return response
 
         # Expose result accessor
-        wrapper.last_result: EvalResult | None = None
+        wrapper.last_result = None  # type: ignore[attr-defined]
         return wrapper  # type: ignore[return-value]
 
     return decorator

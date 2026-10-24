@@ -20,7 +20,7 @@ Author: Anil Prasad | Ambharii Labs
 from __future__ import annotations
 
 from collections import deque
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Any, Callable
 
 import structlog
 from pydantic import BaseModel, Field

@@ -43,7 +43,7 @@ logger = structlog.get_logger(__name__)
 @dataclass
 class ArgusConfig:
     """Configuration for ArgusEvaluator/ArgusClient initialization.
-    
+
     Attributes:
         profile: Weight profile name (enterprise, healthcare, finance, consumer, agentic).
         weights: Custom GarvisWeights (overrides profile).
