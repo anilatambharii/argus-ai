@@ -62,7 +62,7 @@ class ArgusConfig:
 
 
 class ArgusClient:
-    """Production-grade ARGUS client for LLM observability.
+    """ARGUS client for LLM quality scoring and monitoring.
 
     Integrates G-ARVIS scoring, threshold monitoring, alerting,
     and metrics export into a single ergonomic interface.
@@ -230,7 +230,7 @@ class ArgusClient:
                 except ImportError:
                     logger.warning(
                         "prometheus_exporter_unavailable",
-                        hint="pip install argus-ai[prometheus]",
+                        hint="pip install argus-llm[prometheus]",
                     )
             elif name == "opentelemetry":
                 try:
@@ -240,7 +240,7 @@ class ArgusClient:
                 except ImportError:
                     logger.warning(
                         "otel_exporter_unavailable",
-                        hint="pip install argus-ai[opentelemetry]",
+                        hint="pip install argus-llm[opentelemetry]",
                     )
         return active
 

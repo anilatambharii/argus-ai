@@ -5,7 +5,7 @@ Production middleware that scores every LLM response served
 through a FastAPI endpoint and exposes Prometheus metrics.
 
 Usage:
-    pip install argus-ai[prometheus] fastapi uvicorn
+    pip install "argus-llm[prometheus]" fastapi uvicorn
     python examples/fastapi_middleware.py
 
 Then:

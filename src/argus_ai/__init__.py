@@ -1,8 +1,9 @@
 """
-ARGUS-AI: Production-Grade LLM Observability
+ARGUS-AI: Heuristic LLM Quality Scoring and Monitoring
 
 The G-ARVIS scoring engine for Groundedness, Accuracy, Reliability,
 Variance, Inference Cost, and Safety monitoring of LLM applications.
+Scorers are rule-based heuristics intended as trend signals.
 
 Quick Start (3 lines):
 
@@ -16,7 +17,7 @@ https://github.com/anilatambharii/argus-ai
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Anil Prasad"
 
 from argus_ai.monitoring.alerts import AlertRule, AlertSeverity

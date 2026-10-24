@@ -1,7 +1,7 @@
 """
 ARGUS-AI Threshold Monitoring with Alerting
 
-Demonstrates production-grade threshold monitoring with
+Demonstrates threshold monitoring with
 sliding window breach detection and custom alert rules.
 
 Author: Anil Prasad | Ambharii Labs

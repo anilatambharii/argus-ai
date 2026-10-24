@@ -26,7 +26,7 @@ git push -u origin main
 
 ### Step 2: GitHub Repository Settings
 
-1. Add description: "Production-grade LLM observability in 3 lines. G-ARVIS scoring for Groundedness, Accuracy, Reliability, Variance, Inference Cost, and Safety."
+1. Add description: "Heuristic quality scoring and monitoring for LLM outputs in 3 lines. G-ARVIS scores for Groundedness, Accuracy, Reliability, Variance, Inference Cost, and Safety."
 2. Add topics: `llm`, `observability`, `ai-safety`, `mlops`, `monitoring`, `evaluation`, `production-ai`, `garvis`, `agentic-ai`, `python`
 3. Set homepage URL: `https://argus-ai.ambharii.com`
 4. Enable Discussions
@@ -49,7 +49,7 @@ python -m build
 twine upload dist/*
 ```
 
-Verify: `pip install argus-ai && python -c "import argus_ai; print(argus_ai.__version__)"`
+Verify: `pip install argus-llm && python -c "import argus_ai; print(argus_ai.__version__)"`
 
 ---
 
@@ -66,7 +66,7 @@ Pin the post. Reply to every comment within 2 hours for the first 48 hours.
 Post 1:
 "I just open-sourced the G-ARVIS scoring engine.
 
-pip install argus-ai
+pip install argus-llm
 
 3 lines of code. Every LLM call now has a quality score across 6 dimensions.
 
