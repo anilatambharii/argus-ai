@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.1] - 2026-10-23
 
-Metadata and documentation release. No scoring behavior changed.
+Mostly a metadata and documentation release. No scoring behavior changed.
 
 ### Fixed
 
+- `import argus_ai` raised `TypeError` on Python 3.9 (pydantic cannot evaluate `X | None` there), although 0.1.0 declares support for 3.9. The model fields in `types.py` now use `Optional[X]`. CI now passes on 3.9 through 3.13.
+- Lint (`ruff`) and type-check (`mypy`) errors that kept CI red; no behavior changes.
 - README, docstrings, error hints, and example comments told users to run `pip install argus-ai`, which installs an unrelated PyPI package. The correct command is `pip install argus-llm` (extras: `argus-llm[anthropic]`, `[openai]`, `[prometheus]`, `[opentelemetry]`, `[all]`). The import name is unchanged: `import argus_ai`.
 - The PyPI badge in the README now points at `argus-llm`.
 - The Prometheus `argus_build_info` metric now reports the package's real `__version__` instead of a hardcoded `0.1.0`.
