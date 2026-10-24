@@ -253,7 +253,7 @@ Emits metrics through the OpenTelemetry API, so they flow to whatever exporter y
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system design and open core split.
 
 ```
-argus-ai (this package, Apache-2.0)   ARGUS Platform (planned; NOT part of
+argus-llm (this package, Apache-2.0)  ARGUS Platform (planned; NOT part of
                                       this package and not available)
 ├── G-ARVIS heuristic scorers         ├── Autonomous Correction Loop
 ├── 3-Line SDK                        ├── Prompt Optimizer
