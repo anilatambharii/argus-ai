@@ -4,7 +4,7 @@ Prometheus Metrics Exporter
 Exposes G-ARVIS scores as Prometheus gauges and histograms
 for Grafana dashboard consumption.
 
-Requires: pip install argus-ai[prometheus]
+Requires: pip install "argus-llm[prometheus]"
 
 Author: Anil Prasad | Ambharii Labs
 """
@@ -14,6 +14,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from prometheus_client import Counter, Gauge, Histogram, Info
+
+from argus_ai import __version__
 
 if TYPE_CHECKING:
     from argus_ai.types import EvalResult
@@ -30,7 +32,7 @@ class PrometheusExporter:
             f"{prefix}_build",
             "ARGUS AI build information",
         )
-        self._info.info({"version": "0.1.0", "framework": "garvis"})
+        self._info.info({"version": __version__, "framework": "garvis"})
 
         # Composite score gauge
         self._composite = Gauge(

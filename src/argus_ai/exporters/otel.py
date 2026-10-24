@@ -5,7 +5,7 @@ Exports G-ARVIS scores as OTEL metrics for integration with
 Datadog, New Relic, Honeycomb, Grafana Cloud, and other
 OTLP-compatible backends.
 
-Requires: pip install argus-ai[opentelemetry]
+Requires: pip install "argus-llm[opentelemetry]"
 
 Author: Anil Prasad | Ambharii Labs
 """

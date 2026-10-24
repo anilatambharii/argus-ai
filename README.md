@@ -1,15 +1,15 @@
 # ARGUS-AI
 
-**Production-Grade LLM Observability in 3 Lines of Code**
+**Heuristic quality scoring and monitoring for LLM outputs, in 3 lines of code**
 
-[![PyPI version](https://img.shields.io/pypi/v/argus-ai.svg)](https://pypi.org/project/argus-ai/)
+[![PyPI version](https://img.shields.io/pypi/v/argus-llm.svg)](https://pypi.org/project/argus-llm/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://python.org)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![CI](https://github.com/anilatambharii/argus-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/anilatambharii/argus-ai/actions)
 
-ARGUS-AI is the **G-ARVIS scoring engine** for monitoring LLM application quality in production. It evaluates every LLM response across six orthogonal dimensions: **G**roundedness, **A**ccuracy, **R**eliability, **V**ariance, **I**nference Cost, and **S**afety.
+ARGUS-AI is the **G-ARVIS scoring engine** for monitoring LLM application quality. It scores each LLM response across six dimensions: **G**roundedness, **A**ccuracy, **R**eliability, **V**ariance, **I**nference Cost, and **S**afety.
 
-Your LLM app is degrading right now. You just can't see it yet.
+> **Status: Beta (0.1.x).** All scorers are lightweight rule-based heuristics (keyword, regex, and token-overlap checks), not trained models. Treat the scores as trend signals to monitor over time, not as verdicts on any single response. This repository does not include benchmarks of the scorers against labelled datasets.
 
 ```python
 import argus_ai
@@ -18,49 +18,49 @@ argus = argus_ai.init()
 result = argus.evaluate(prompt=prompt, response=response, context=context)
 ```
 
-That's it. Every LLM call now has a quality score.
+That's it. Every LLM call you pass through `evaluate` gets a G-ARVIS score.
 
 ---
 
 ## Why ARGUS
 
-LLM outputs degrade silently. Models update, prompts drift, context windows overflow, and costs creep. Traditional monitoring catches latency and errors. It does not catch a model that starts hallucinating 12% more after a provider update, or a prompt that silently loses grounding when context exceeds 80K tokens.
+LLM outputs can degrade without raising errors: models update, prompts drift, and costs creep. Traditional monitoring catches latency and errors, but not changes in output quality. G-ARVIS gives you per-dimension scores you can export to your metrics stack and alert on, so a drop shows up in a dashboard instead of in a user complaint.
 
-G-ARVIS catches it.
+| Dimension | What the heuristic measures | Signal for |
+|-----------|-----------------------------|------------|
+| **Groundedness** | Word overlap between the response and the context you supply (plus small adjustments for attribution and speculation phrases). Returns a neutral 0.5 when no context is given. | Responses drifting away from the provided context. Not a hallucination detector. |
+| **Accuracy** | Token-level F1 against `ground_truth` when you supply it, plus simple internal-consistency and numeric checks | Obvious mismatches with a reference answer. Does not verify facts. |
+| **Reliability** | Truncation markers, JSON/markdown format checks, response length relative to the prompt, latency tiers | Structural quality |
+| **Variance** | Wording signals in a single response (hedging vs. definitive phrases, vocabulary diversity). Multi-run variance analysis is not part of this package. | Confidence and consistency of tone |
+| **Inference Cost** | Token, cost, and latency ratios computed from the numbers you pass in | Budget control |
+| **Safety** | Regex and keyword scan of the response for PII-like patterns (emails, SSNs, card and phone numbers), a short toxicity word list, and system-prompt/jailbreak marker phrases | Flagging risky-looking output. It will miss things and produce false positives; it does not replace dedicated safety or security tooling. |
 
-| Dimension | What It Measures | Why It Matters |
-|-----------|-----------------|----------------|
-| **Groundedness** | Is the response grounded in provided context? | Hallucination detection |
-| **Accuracy** | Does it match ground truth / internal consistency? | Factual correctness |
-| **Reliability** | Format consistency, completeness, latency SLA | Structural quality |
-| **Variance** | Output determinism and confidence signals | Consistency across runs |
-| **Inference Cost** | Token efficiency, cost-per-word, latency-to-value | Budget control |
-| **Safety** | PII leakage, toxicity, injection, harmful content | Compliance and trust |
+Plus three **agentic evaluation metrics** for autonomous workflows (scores in [0, 1]; see `src/argus_ai/scoring/agentic.py` for the exact formulas):
 
-Plus three **agentic evaluation metrics** for autonomous workflows:
-
-| Metric | Formula | What It Measures |
+| Metric | Formula (simplified) | What It Measures |
 |--------|---------|-----------------|
-| **ASF** (Agent Stability Factor) | completion × (1 - failure_rate) × consistency | Workflow completion reliability |
-| **ERR** (Error Recovery Rate) | recovered / failed | Self-healing capability |
-| **CPCS** (Cost Per Completed Step) | total_cost / completed_steps | Economic efficiency per step |
+| **ASF** (Agent Stability Factor) | completion_ratio × (1 - failure_rate) × consistency_factor (a retry penalty) | Workflow completion reliability |
+| **ERR** (Error Recovery Rate) | recovered / failed, plus a small bonus for fewer retries per recovery | Recovery from failed steps |
+| **CPCS** (Cost Per Completed Step) | 1 - min((total_cost / completed_steps) / budget_per_step, 1), default budget $0.10/step | Cost efficiency per step |
 
 ---
 
 ## Install
 
 ```bash
-pip install argus-ai
+pip install argus-llm
 ```
+
+The PyPI package is named `argus-llm`; the Python import name is `argus_ai`. (The similarly named `argus-ai` package on PyPI is an unrelated project.)
 
 With provider integrations:
 
 ```bash
-pip install argus-ai[anthropic]    # Anthropic Claude wrapper
-pip install argus-ai[openai]       # OpenAI wrapper
-pip install argus-ai[prometheus]   # Prometheus export
-pip install argus-ai[opentelemetry] # OTEL export
-pip install argus-ai[all]          # Everything
+pip install "argus-llm[anthropic]"      # Anthropic Claude wrapper
+pip install "argus-llm[openai]"         # OpenAI wrapper
+pip install "argus-llm[prometheus]"     # Prometheus export
+pip install "argus-llm[opentelemetry]"  # OTEL export
+pip install "argus-llm[all]"            # Everything
 ```
 
 ---
@@ -85,10 +85,12 @@ result = argus.evaluate(
     cost_usd=0.002,
 )
 
-print(f"Composite: {result.garvis_composite:.3f}")  # 0.847
+print(f"Composite: {result.garvis_composite:.3f}")  # 0.755
 print(f"Passing:   {result.passing}")                # True
-print(f"Safety:    {result.safety:.3f}")             # 0.950
+print(f"Safety:    {result.safety:.3f}")             # 1.000
 ```
+
+The values in the comments are the actual output of this snippet on argus-llm 0.1.1. Scores depend on your inputs and the heuristics, and may change between releases. (Here the groundedness score is low, 0.167, because the response shares few words with the context; the heuristic measures word overlap, not meaning.)
 
 ### Agentic Workflow Evaluation
 
@@ -112,10 +114,12 @@ result, agentic_metrics = argus.evaluate_agentic(workflow)
 
 for m in agentic_metrics:
     print(f"{m.name}: {m.score:.3f}")
-# AgentStabilityFactor: 0.612
-# ErrorRecoveryRate: 0.600
+# AgentStabilityFactor: 0.632
+# ErrorRecoveryRate: 0.540
 # CostPerCompletedStep: 0.357
 ```
+
+(Actual output on argus-llm 0.1.1.)
 
 ### Drop-In Provider Wrappers
 
@@ -207,10 +211,12 @@ G-ARVIS weights are configurable per deployment scenario:
 | Profile | G | A | R | V | I | S | Best For |
 |---------|---|---|---|---|---|---|----------|
 | `enterprise` | 0.20 | 0.20 | 0.15 | 0.15 | 0.10 | 0.20 | General production |
-| `healthcare` | 0.25 | 0.25 | 0.15 | 0.10 | 0.05 | 0.20 | HIPAA workloads |
-| `finance` | 0.20 | 0.25 | 0.20 | 0.10 | 0.05 | 0.20 | SOX/GAAP compliance |
+| `healthcare` | 0.25 | 0.25 | 0.15 | 0.10 | 0.05 | 0.20 | Healthcare-oriented weights |
+| `finance` | 0.20 | 0.25 | 0.20 | 0.10 | 0.05 | 0.20 | Finance-oriented weights |
 | `consumer` | 0.15 | 0.15 | 0.20 | 0.15 | 0.20 | 0.15 | Cost-sensitive apps |
 | `agentic` | 0.15 | 0.15 | 0.25 | 0.20 | 0.10 | 0.15 | Autonomous agents |
+
+These profiles only change how the six dimension scores are weighted into the composite. This library scores LLM outputs and does not provide or certify regulatory compliance.
 
 Custom weights:
 
@@ -238,7 +244,7 @@ Exposes: `argus_garvis_composite`, `argus_garvis_{dimension}`, `argus_evaluation
 argus = argus_ai.init(exporters=["opentelemetry"])
 ```
 
-Compatible with Datadog, New Relic, Honeycomb, Grafana Cloud, and any OTLP backend.
+Emits metrics through the OpenTelemetry API, so they flow to whatever exporter you configure in the OpenTelemetry SDK (for example OTLP). It has not been tested against specific vendor backends.
 
 ---
 
@@ -247,27 +253,32 @@ Compatible with Datadog, New Relic, Honeycomb, Grafana Cloud, and any OTLP backe
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system design and open core split.
 
 ```
-argus-ai (Open Source)          ARGUS Platform (Commercial)
-├── G-ARVIS Scorer              ├── Autonomous Correction Loop
-├── 3-Line SDK                  ├── Prompt Optimizer
-├── Threshold Monitor           ├── LLM-as-Judge Evaluation
-├── ASF/ERR/CPCS Metrics        ├── Multi-Run Variance Analysis
-├── Prometheus/OTEL Export      ├── Dashboard UI
-└── Anthropic/OpenAI Wrappers   └── SOC2/HIPAA Compliance
+argus-ai (this package, Apache-2.0)   ARGUS Platform (planned; NOT part of
+                                      this package and not available)
+├── G-ARVIS heuristic scorers         ├── Autonomous Correction Loop
+├── 3-Line SDK                        ├── Prompt Optimizer
+├── Threshold Monitor                 ├── LLM-as-Judge Evaluation
+├── ASF/ERR/CPCS Metrics              ├── Multi-Run Variance Analysis
+├── Prometheus/OTEL Export            └── Dashboard UI
+└── Anthropic/OpenAI Wrappers
 ```
+
+Nothing in the right-hand column is included in, or can be obtained through, this package.
 
 ---
 
 ## Performance
 
-G-ARVIS heuristic scoring runs in **sub-5ms** per evaluation with zero external dependencies at runtime.
+G-ARVIS scoring is pure Python (regex and string operations) with no network calls. Measured on one machine (Intel Xeon E3-1505M v6 @ 3.0 GHz, 64 GB RAM, Windows 10, Python 3.11, argus-llm 0.1.1, default console logging on, evaluating the Quick Start example repeatedly):
 
-| Benchmark | Value |
-|-----------|-------|
-| Single evaluation | < 3ms |
-| Batch (1000 requests) | < 2.5s |
-| Memory overhead | < 5MB |
-| Dependencies (core) | 3 (pydantic, numpy, structlog) |
+| Measurement | Result |
+|-------------|--------|
+| Single `evaluate()` call | median ≈ 0.6 ms, p99 ≈ 2.6 ms (3.7 ms worst of 2,000 calls) |
+| 1,000 sequential `evaluate()` calls | ≈ 0.6 s |
+| Memory | No measurable growth over 1,000 calls. Importing the package and its dependencies adds about 19 MB of process memory. |
+| Core install dependencies | 3 (pydantic, numpy, structlog), as declared in `pyproject.toml` |
+
+Your numbers will vary with hardware, input length, and logging configuration. Reproduce the timings with `python benchmarks/benchmark.py > /dev/null` (the memory figure was measured separately by comparing process RSS before and after import and after 1,000 calls).
 
 ---
 

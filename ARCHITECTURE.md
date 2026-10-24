@@ -3,6 +3,7 @@
 ## Open Core Strategy
 
 ARGUS follows an **Open Core** model. This repository is the open-source layer.
+The "ARGUS Platform" layer shown below is planned and is not part of this package or available today.
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -17,8 +18,8 @@ ARGUS follows an **Open Core** model. This repository is the open-source layer.
 │  │  Evaluation     │ │  Processing      │ │  Variance Analysis   │  │
 │  └─────────────────┘ └──────────────────┘ └──────────────────────┘  │
 │  ┌─────────────────┐ ┌──────────────────┐ ┌──────────────────────┐  │
-│  │  Dashboard UI   │ │  Team Management │ │  SOC2/HIPAA          │  │
-│  │                 │ │                  │ │  Compliance           │  │
+│  │  Dashboard UI   │ │  Team Management │ │  Audit Reporting     │  │
+│  │                 │ │                  │ │  (planned)           │  │
 │  └─────────────────┘ └──────────────────┘ └──────────────────────┘  │
 ├──────────────────────────────────────────────────────────────────────┤
 │                    argus-ai (Open Source - This Repo)                 │
@@ -102,15 +103,15 @@ src/argus_ai/
 
 ## Design Principles
 
-1. **Zero-dependency core**: Only pydantic, numpy, structlog required
-2. **Sub-millisecond scoring**: Heuristic scorers run in <5ms per evaluation
-3. **Extensible**: Plugin architecture for custom scorers and exporters
+1. **Small core**: Only pydantic, numpy, structlog are required (exporters and provider wrappers are optional extras)
+2. **Lightweight scoring**: Heuristic scorers; roughly 0.6 ms median per evaluation in the README benchmark (see `benchmarks/benchmark.py`)
+3. **Extensible**: Scorers and exporters are plain classes; a formal plugin API is on the roadmap
 4. **Type-safe**: Full mypy strict mode compliance
 5. **Production-first**: Structured logging, Prometheus/OTEL export, alert callbacks
 
 ## What's NOT in Open Source (ARGUS Platform)
 
-The following capabilities are proprietary and not included:
+The following capabilities are planned for the commercial platform and are not included in this package:
 
 - **Autonomous correction loop**: The orchestrator agent that automatically
   fixes degraded LLM outputs
@@ -119,4 +120,4 @@ The following capabilities are proprietary and not included:
 - **Multi-run variance analysis**: Temperature sweep, prompt perturbation tests
 - **Async batch processing**: High-throughput parallel evaluation pipeline
 - **Dashboard UI**: Real-time G-ARVIS visualization and team management
-- **Compliance reporting**: SOC2/HIPAA audit trail generation
+- **Audit-trail reporting** (planned)

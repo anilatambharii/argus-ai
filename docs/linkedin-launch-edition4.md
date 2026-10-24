@@ -4,7 +4,7 @@
 
 Today I am releasing argus-ai to the world.
 
-`pip install argus-ai`
+`pip install argus-llm`
 
 Three lines of code. Every LLM call in your application now has a quality score.
 
@@ -85,7 +85,7 @@ The package is on PyPI today. The repo is at github.com/anilatambharii/argus-ai.
 ### Try It
 
 ```bash
-pip install argus-ai
+pip install argus-llm
 ```
 
 ```python

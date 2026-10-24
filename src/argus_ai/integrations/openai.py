@@ -14,7 +14,7 @@ Usage:
     )
     print(response._argus_score.garvis_composite)
 
-Requires: pip install argus-ai[openai]
+Requires: pip install "argus-llm[openai]"
 
 Author: Anil Prasad | Ambharii Labs
 """
@@ -144,7 +144,7 @@ class InstrumentedOpenAI:
         except ImportError:
             raise ImportError(
                 "openai package required. Install with: "
-                "pip install argus-ai[openai]"
+                "pip install argus-llm[openai]"
             ) from None
 
         self._client = OpenAI(**openai_kwargs)

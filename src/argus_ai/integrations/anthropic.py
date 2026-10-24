@@ -15,7 +15,7 @@ Usage:
     )
     # response._argus_score is automatically attached
 
-Requires: pip install argus-ai[anthropic]
+Requires: pip install "argus-llm[anthropic]"
 
 Author: Anil Prasad | Ambharii Labs
 """
@@ -142,7 +142,7 @@ class InstrumentedAnthropic:
         except ImportError:
             raise ImportError(
                 "anthropic package required. Install with: "
-                "pip install argus-ai[anthropic]"
+                "pip install argus-llm[anthropic]"
             ) from None
 
         self._client = Anthropic(**anthropic_kwargs)
