@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 import uuid
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -35,13 +35,13 @@ class EvalRequest(BaseModel):
     request_id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     prompt: str
     response: str
-    context: str | None = None
-    ground_truth: str | None = None
-    model_name: str | None = None
-    latency_ms: float | None = None
-    input_tokens: int | None = None
-    output_tokens: int | None = None
-    cost_usd: float | None = None
+    context: Optional[str] = None
+    ground_truth: Optional[str] = None
+    model_name: Optional[str] = None
+    latency_ms: Optional[float] = None
+    input_tokens: Optional[int] = None
+    output_tokens: Optional[int] = None
+    cost_usd: Optional[float] = None
     metadata: dict[str, Any] = Field(default_factory=dict)
     timestamp: float = Field(default_factory=time.time)
 
@@ -109,4 +109,4 @@ class AgenticEvalRequest(EvalRequest):
     tool_calls: list[dict[str, Any]] = Field(default_factory=list)
     total_cost_usd: float = 0.0
     retries: int = 0
-    workflow_id: str | None = None
+    workflow_id: Optional[str] = None

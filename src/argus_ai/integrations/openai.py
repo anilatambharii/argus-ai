@@ -140,7 +140,7 @@ class InstrumentedOpenAI:
         **openai_kwargs: Any,
     ) -> None:
         try:
-            from openai import OpenAI  # type: ignore[import-untyped]
+            from openai import OpenAI
         except ImportError:
             raise ImportError(
                 "openai package required. Install with: "
