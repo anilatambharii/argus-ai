@@ -138,7 +138,7 @@ class InstrumentedAnthropic:
         **anthropic_kwargs: Any,
     ) -> None:
         try:
-            from anthropic import Anthropic  # type: ignore[import-untyped]
+            from anthropic import Anthropic
         except ImportError:
             raise ImportError(
                 "anthropic package required. Install with: "
